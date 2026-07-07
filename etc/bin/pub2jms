@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+# -*-Perl-*-
+#
+### =============================================================== ###
+#                                                                     #
+#  Example Publish To Java Messaging Service (JMS) Interface          #
+#                                                                     #
+#  Function:                                                          #
+#                                                                     #
+#  Assumptions:                                                       #
+#  - Perl 5 is installed on the target platform in /usr/bin/perl      #
+#  - The $FEI5 environment variable must point to the directory       #
+#    containing the domain.fei, the SSL certificate, and              #
+#    mdmsconfig.pm files.                                             #
+#                                                                     #
+#  Copyright (c) 2006 by the California Institute of Technology.      #
+#  ALL RIGHTS RESERVED.  United States Government Sponsorship         #
+#  acknowledged. Any commercial use must be negotiated with the       #
+#  Office of Technology at the California Institute of Technology.    #
+#                                                                     #
+#  The technical data in this document (or file) is controlled for    #
+#  export under the Export Administration Regulations (EAR), 15 CFR,  #
+#  Parts 730-774. Violations of these laws are subject to fines and   #
+#  penalties under the Export Administration Act.                     #
+#                                                                     #
+#                                                                     #
+#  Created:                                                           #
+#  Oct. 21, 2004 by T. Huang {Thomas.Huang@jpl.nasa.gov}              #
+#                                                                     #
+#  Modifications:                                                     # 
+#                                                                     #
+### =============================================================== ###
+#
+# $Id: pub2jms,v 1.16 2006/10/03 02:18:19 ntt Exp $
+#
+
+use strict;
+use File::Spec;
+die "[ERROR] FEI5 environment variable is not set.\n" unless $ENV{FEI5};
+require File::Spec->catdir($ENV{FEI5}, 'mdmsconfig.pm');
+
+#umask 077;
+
+#set $debug to 1 to turn on trace info
+my $debug=0;
+
+my $javaCmd = &getCmd ($debug);
+my $classpath = $ENV{CLASSPATH} ? $ENV{CLASSPATH} : "";
+my $url = 'file://'.File::Spec->catdir($ENV{FEI5},'mdms.lcf');
+my @args = &getJVMArgs($classpath, $debug);
+                                                                              
+push @args, "-Dlog4j.configuration=$url";
+push @args, "-Dlog4j.configuratorClass=org.apache.log4j.xml.DOMConfigurator";
+push @args, "-Dmdms.user.operation=spider.util.pub2jms";
+push @args, "-Djava.naming.factory.initial=org.jnp.interfaces.NamingContextFactory";
+push @args, "-Djava.naming.provider.url=jnp://$ENV{JAVA_NAMING_HOST}:1099";
+push @args, "-Djava.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces";
+push @args, "-Dwebservice.uri=http://127.0.0.1:8080/jboss-net/services/DomainEJB";
+push @args, "jpl.mipl.mdms.FileService.spider.util.PublishToJms";
+push @args, @ARGV;
+                                                                              
+                                                                              
+print "\n $javaCmd @args\n\n" if ($debug);
+my $returnValue = system $javaCmd, @args;
+exit $returnValue >> 8;

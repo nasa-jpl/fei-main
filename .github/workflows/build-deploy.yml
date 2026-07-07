@@ -1,0 +1,163 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # needed for creating/updating GitHub Releases
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout
+      # -----------------------------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history needed for version check
+
+      # -----------------------------------------------------------------------
+      # Java / Maven setup
+      # -----------------------------------------------------------------------
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          # GPG setup for Maven Central signing.
+          # Requires secrets: GPG_PRIVATE_KEY, GPG_PASSPHRASE
+          # See docs/SONATYPE_SETUP.md for how to generate and register these.
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      # -----------------------------------------------------------------------
+      # Version check — all branches must bump <semver> in pom.xml
+      # -----------------------------------------------------------------------
+      - name: Version check
+        run: |
+          if ! git log -p -- pom.xml | grep -q '<semver>'; then
+            echo "ERROR: no change to <semver> in pom.xml found on this branch."
+            echo "Bump <semver> in pom.xml before merging."
+            exit 1
+          fi
+          echo "Version check passed: <semver> updated in pom.xml."
+
+      # -----------------------------------------------------------------------
+      # Compute version variables
+      #
+      # master branch  →  clean semver, e.g. 3.6.4
+      # feature branch →  3.6.4-<safe-branch-name>-<YYYYMMDDHHmm>, e.g.
+      #                    3.6.4-feature-login-202407061423
+      # -----------------------------------------------------------------------
+      - name: Compute version variables
+        id: versions
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          SEMVER=$(grep -m1 '<semver>' pom.xml | sed 's/.*<semver>\(.*\)<\/semver>.*/\1/' | tr -d '[:space:]')
+
+          if [ "${BRANCH_NAME}" = "master" ]; then
+            BUILDNUM=""
+            SHA1=""
+            CHANGELIST=""
+            POSTFIX=""
+          else
+            # Sanitize branch name: replace any non-alphanumeric (except '-') with '-',
+            # collapse consecutive dashes, strip leading/trailing dashes
+            SAFE_BRANCH=$(echo "${BRANCH_NAME}" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
+            TIMESTAMP=$(date -u '+%Y%m%d%H%M')
+            POSTFIX="${SAFE_BRANCH}-${TIMESTAMP}"
+            BUILDNUM=""
+            SHA1=""
+            CHANGELIST="-${POSTFIX}"
+          fi
+
+          echo "SEMVER=${SEMVER}"               >> "$GITHUB_OUTPUT"
+          echo "BUILDNUM=${BUILDNUM}"           >> "$GITHUB_OUTPUT"
+          echo "SHA1=${SHA1}"                   >> "$GITHUB_OUTPUT"
+          echo "CHANGELIST=${CHANGELIST}"       >> "$GITHUB_OUTPUT"
+          echo "POSTFIX=${POSTFIX}"             >> "$GITHUB_OUTPUT"
+          echo "VERSION=${SEMVER}${CHANGELIST}" >> "$GITHUB_OUTPUT"
+
+          echo "== Version: ${SEMVER}${CHANGELIST} =="
+
+      # -----------------------------------------------------------------------
+      # Build, test, and generate Javadoc
+      # -----------------------------------------------------------------------
+      - name: Build
+        run: |
+          mvn -B \
+            -Dmaven.test.skip=false \
+            -Dmaven.source.skip=false \
+            -Dchangelist=${{ steps.versions.outputs.CHANGELIST }} \
+            -Dbuildnum=${{ steps.versions.outputs.BUILDNUM }} \
+            -Dsha1=${{ steps.versions.outputs.SHA1 }} \
+            javadoc:jar install
+
+      # -----------------------------------------------------------------------
+      # Deploy JARs (mdms, mdms-komodo-lib) to Maven Central via Sonatype
+      #
+      # Prerequisites — add these secrets to the GitHub repo:
+      #   OSSRH_USERNAME   : Sonatype Central user token username
+      #   OSSRH_PASSWORD   : Sonatype Central user token password
+      #   GPG_PRIVATE_KEY  : armored GPG private key (gpg --export-secret-keys --armor <ID>)
+      #   GPG_PASSPHRASE   : passphrase for the GPG key
+      #
+      # See docs/SONATYPE_SETUP.md for full setup instructions.
+      # -----------------------------------------------------------------------
+      - name: Deploy JARs to Maven Central
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn -B \
+            -DskipTests \
+            -Dmaven.source.skip=false \
+            -Dchangelist=${{ steps.versions.outputs.CHANGELIST }} \
+            -Dbuildnum=${{ steps.versions.outputs.BUILDNUM }} \
+            -Dsha1=${{ steps.versions.outputs.SHA1 }} \
+            -Prelease \
+            --projects mdms,mdms-komodo-lib \
+            --also-make \
+            javadoc:jar deploy \
+            -Dgpg.passphrase="${GPG_PASSPHRASE}" \
+            -s .github/maven-settings.xml
+
+      # -----------------------------------------------------------------------
+      # GitHub Release for mdms-shared-lib tar.gz
+      #
+      # master  → tagged release   v<semver>  (e.g. v3.6.4)
+      # feature → pre-release      pre-release-<branch>-<timestamp>
+      #           asset is replaced on each push to the same branch
+      # -----------------------------------------------------------------------
+      - name: Locate tar.gz artifact
+        id: artifact
+        run: |
+          TARBALL=$(find mdms-shared-lib/target -name "*-etc.tar.gz" | head -1)
+          echo "TARBALL=${TARBALL}" >> "$GITHUB_OUTPUT"
+          echo "Found: ${TARBALL}"
+
+      - name: Release (master) — create tagged release
+        if: github.ref_name == 'master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.versions.outputs.VERSION }}
+          name: v${{ steps.versions.outputs.VERSION }}
+          prerelease: false
+          files: ${{ steps.artifact.outputs.TARBALL }}
+
+      - name: Release (feature branch) — update pre-release
+        if: github.ref_name != 'master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pre-release-${{ steps.versions.outputs.POSTFIX }}
+          name: Pre-release ${{ steps.versions.outputs.VERSION }}
+          prerelease: true
+          files: ${{ steps.artifact.outputs.TARBALL }}

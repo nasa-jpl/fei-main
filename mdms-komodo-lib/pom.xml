@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>JPL - AMMOS - IDS - FEI5 Main - MDMS Komodo Lib</name>
+    <description>mdms-komodo-lib</description>
+
+    <parent>
+        <groupId>gov.nasa.jpl.ammos.ids.fei5</groupId>
+        <artifactId>fei-main</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <groupId>gov.nasa.jpl.ammos.ids.fei5</groupId>
+    <artifactId>mdms-komodo-lib</artifactId>
+    <packaging>jar</packaging>
+
+    <build>
+        <plugins>
+            <!-- Jakarta-compatible JAX-WS plugin for Java 17+ -->
+            <plugin>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-atlas-ingest-service-client</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>jpl.mipl.mdms.FileService.komodo.services.query.server</packageName>
+                            <wsdlDirectory>${basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}wsdl${file.separator}query-service${file.separator}xml</wsdlDirectory>
+                            <keep>true</keep>
+                            <sourceDestDir>${basedir}${file.separator}target${file.separator}generated-sources${file.separator}wsdl</sourceDestDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mdms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <!-- Jakarta XML Web Services API for Java 17+ -->
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+        </dependency>
+        <!-- Jakarta XML Binding API for Java 17+ -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <!-- JAXB Runtime (implementation) -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Bouncy Castle FIPS Provider for FIPS 140-2/140-3 compliance -->
+        <!-- Used by SecureSocketsUtil for FIPS-certified SSL/TLS -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bc-fips</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-fips</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcutil-fips</artifactId>
+        </dependency>
+    </dependencies>
+</project>

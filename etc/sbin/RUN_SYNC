@@ -1,0 +1,68 @@
+#!/usr/bin/perl -w
+#
+### ==================================================================== ###
+#                                                                          #
+#  The File Exchange Interface (FEI) Bridge Startup                        #
+#                                                                          #
+#  Function:                                                               #
+#  Script to startup the FEI5 message bridge.                              #
+#                                                                          #
+#  Copyright (c) 2006 by the California Institute of Technology.           #
+#  ALL RIGHTS RESERVED.  United States Government Sponsorship              #
+#  acknowledged. Any commercial use must be negotiated with the            #
+#  Office of Technology at the California Institute of Technology.         #
+#                                                                          #
+#  The technical data in this document (or file) is controlled for         #
+#  export under the Export Administration Regulations (EAR), 15 CFR,       #
+#  Parts 730-774. Violations of these laws are subject to fines and        #
+#  penalties under the Export Administration Act.                          #
+#                                                                          #
+#  History:                                                                #
+#  Aug. 18, 2006 initial release                                           #
+#                                                                          #
+#                                                                          #
+### ==================================================================== ###
+#
+# $Id: RUN_SYNC,v 1.2 2008/02/13 20:16:34 awt Exp $
+#
+
+use strict;
+use File::Spec;
+use Getopt::Std;
+use Sys::Hostname;
+die "[ERROR] FEI5 environment variable is not set.\n" unless $ENV{FEI5};
+require File::Spec->catdir($ENV{FEI5}, 'mdmsconfig.pm');
+
+umask 077;
+
+my @app_argv = @ARGV;
+my $debug=0;
+
+my $javaCmd = &getCmd ($debug);
+my $classpath = $ENV{CLASSPATH} ? $ENV{CLASSPATH} : "";
+my @args = &getJVMArgsForServer($classpath, $debug);
+
+my $policy = File::Spec->catdir($ENV{FEI5}, 'komodo.policy');
+my $logconfig = File::Spec->catdir($ENV{FEI5}, 'mdmsserver.lcf');
+
+my %options=();
+getopt ('c:', \%options);
+my $logfile = "default_fei.log";
+my $configFile  = "";
+
+die "\nUsage: RUN_SYNC -c configfile\n\n" unless ($options{c});
+
+if ($options{c}) {
+   $configFile = $options{c};
+}
+
+push @args, "-Dmdms.logging.config=$logconfig";
+push @args, "-Dmdms.logging.file=$logfile";
+push @args, "-Dkomodo.home=".File::Spec->catdir($ENV{FEI5}, '..');
+push @args, "-Dkomodo.version=".File::Spec->catdir($ENV{FEI5}, '..');
+push @args, "jpl.mipl.mdms.FileService.komodo.services.sync.QSync";
+push @args, "$configFile";
+
+print "\n $javaCmd @args\n\n" if ($debug);
+my $returnValue = system $javaCmd, @args;
+exit $returnValue >> 8;

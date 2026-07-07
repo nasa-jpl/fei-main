@@ -1,0 +1,17 @@
+<assembly>
+    <id>etc</id>
+    <baseDirectory />
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <useDefaultExcludes>false</useDefaultExcludes>
+            <directory>${project.basedir}${file.separator}..${file.separator}etc</directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

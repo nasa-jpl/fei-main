@@ -1,0 +1,4 @@
+#SSL information
+#
+keys.file=mdms-dev.keys
+keys.pwd=

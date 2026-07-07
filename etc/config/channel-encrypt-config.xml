@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   JGroups protocol stack configuration
+
+   @version $Id: channel-encrypt-config.xml,v 1.2 2007/05/24 19:35:37 awt Exp $
+-->
+<config>
+    <UDP mcast_send_buf_size="32000" mcast_port="45566" ucast_recv_buf_size="64000" mcast_addr="228.8.8.8"
+        loopback="true" mcast_recv_buf_size="64000" max_bundle_size="60000" max_bundle_timeout="30"
+        use_incoming_packet_handler="false" use_outgoing_packet_handler="false" ucast_send_buf_size="32000"
+        ip_ttl="32" enable_bundling="false"/>
+    <PING timeout="2000" num_initial_members="3"/>
+    <MERGE2 max_interval="10000" min_interval="5000"/>
+    <!-- <FD timeout="2000" max_tries="3" shun="true"/> -->
+    <FD_SOCK />
+    <VERIFY_SUSPECT timeout="1500"/>
+    <pbcast.NAKACK max_xmit_size="8192" use_mcast_xmit="false" gc_lag="50" retransmit_timeout="600,1200,2400,4800"/>
+    <UNICAST timeout="1200,2400,3600"/>
+
+    <!--
+    - desired_avg_gossip: periodically sends STABLE messages around. 0 disables this
+    - max_bytes: max number of bytes received from anyone until a STABLE message is sent. Use either this or
+                 desired_avg_gossip, but not both ! 0 disables it.
+    - stability_delay: range (number of milliseconds) that we wait until sending a STABILITY message.
+      This prevents STABILITY multicast storms. If max_bytes is used, this should be set to a low value (> 0 though !).
+    -->
+    <pbcast.STABLE stability_delay="1000" desired_avg_gossip="20000" max_bytes="250000"/>
+    <FRAG frag_size="8192" down_thread="false" up_thread="false"/>
+    <pbcast.GMS print_local_addr="true" join_timeout="3000" join_retry_timeout="2000" shun="true"/>
+    <!--<ENCRYPT sym_init="56" sym_algorithm="Blowfish" asym_init="512" asym_algorithm="RSA"/>
+    <STATE_TRANSFER />
+    <QUEUE />-->
+    <!--
+        ENCRYPT configuration for JGroups channel encryption.
+
+        Replace the placeholder values below before deploying:
+          key_store_name : filename of the JKS keystore file containing the symmetric key used to
+                           encrypt/decrypt JGroups messages (e.g. "mdms-fei-channel.keystore").
+                           The keystore file must be placed on the classpath or in the working
+                           directory of the FEI5 server/client process.
+          store_password : the password used to open the keystore file. Set this to the password
+                           chosen when the keystore was created with `keytool`.
+          alias          : the alias of the key entry inside the keystore that JGroups will use
+                           for encryption. Must match the alias used during `keytool -genseckey`. (e.g. "mdms-dev")
+    -->
+    <ENCRYPT key_store_name="REPLACE_WITH_KEYSTORE_FILENAME"
+             store_password="REPLACE_WITH_KEYSTORE_PASSWORD"
+             alias="REPLACE_WITH_KEY_ALIAS"/>
+</config>

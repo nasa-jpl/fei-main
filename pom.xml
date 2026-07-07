@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>JPL - AMMOS - IDS - FEI Main Parent</name>
+    <description>FEI Main Parent POM</description>
+
+    <groupId>gov.nasa.jpl.ammos.ids.fei5</groupId>
+    <artifactId>fei-main</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <organization>
+        <name>NASA Jet Propulsion Laboratory</name>
+        <url>https://www.jpl.nasa.gov/</url>
+    </organization>
+
+    <modules>
+        <module>mdms</module>
+        <module>mdms-komodo-lib</module>
+        <module>mdms-shared-lib</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Tagging for CI -->
+        <semver>3.6.4</semver>
+        <revision>${semver}${buildnum}${sha1}${changelist}</revision>
+        <!-- Version suffix properties (set by CI; defaults produce a local SNAPSHOT build) -->
+        <buildnum>b0</buildnum>
+        <sha1/>
+        <changelist>-SNAPSHOT</changelist>
+        <!-- Compiler settings (inlined from parent-mipl) -->
+        <compiler.debug>true</compiler.debug>
+        <compiler.debuglevel>source,lines,vars</compiler.debuglevel>
+        <compiler.javac>true</compiler.javac>
+        <!-- Plugin versions (inlined from parent-mipl) -->
+        <version.plugin.compiler>3.8.1</version.plugin.compiler>
+        <version.plugin.assembly>3.3.0</version.plugin.assembly>
+        <version.plugin.clean>3.1.0</version.plugin.clean>
+        <version.plugin.dependency>3.1.2</version.plugin.dependency>
+        <version.plugin.deploy>3.0.0-M1</version.plugin.deploy>
+        <version.plugin.enforcer>3.0.0-M3</version.plugin.enforcer>
+        <version.plugin.flatten>1.2.7</version.plugin.flatten>
+        <version.plugin.install>3.0.0-M1</version.plugin.install>
+        <version.plugin.jar>3.2.0</version.plugin.jar>
+        <version.plugin.javadoc>3.3.1</version.plugin.javadoc>
+        <version.plugin.release>3.0.0-M4</version.plugin.release>
+        <version.plugin.scm>1.11.3</version.plugin.scm>
+        <version.plugin.shade>3.2.4</version.plugin.shade>
+        <version.plugin.surefire>3.0.0-M5</version.plugin.surefire>
+        <version.plugin.source>3.2.1</version.plugin.source>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+        <skipTests>false</skipTests>
+        <!-- BUILD PARMS -->
+        <!-- VERSIONING -->
+        <version.plugin.replacer>1.5.2</version.plugin.replacer>
+        <version.plugin.resources>3.2.0</version.plugin.resources>
+        <version.plugin.jaxb2>2.5.0</version.plugin.jaxb2>
+        <!-- JAX-WS Maven Plugin - using Jakarta-compatible version for Java 17+ -->
+        <!-- Note: Changed from org.codehaus.mojo:jaxws-maven-plugin:2.6 to com.sun.xml.ws:jaxws-maven-plugin -->
+        <!-- The old codehaus plugin doesn't work with Java 11+ (javax.xml.ws APIs removed) -->
+        <version.plugin.jaxws>4.0.3</version.plugin.jaxws>
+        <version.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws-api>
+        <version.jakarta.xml.bind-api>4.0.0</version.jakarta.xml.bind-api>
+        <version.jaxb-impl>4.0.0</version.jaxb-impl>
+        <version.authapi>8.1.2-SNAPSHOT</version.authapi>
+        <version.cryptoj>8.1.2-SNAPSHOT</version.cryptoj>
+        <version.jconnect>5.5_EBF_11937-SNAPSHOT</version.jconnect>
+        <version.juneberry>1.0.7-SNAPSHOT</version.juneberry>
+        <version.c3p0>0.8.5.2</version.c3p0>
+        <version.json-simple>1.1</version.json-simple>
+        <version.fscontext>4.2</version.fscontext>
+        <version.commons-codec>1.4</version.commons-codec>
+        <version.commons-logging>1.0.4</version.commons-logging>
+        <version.dom4j>1.6</version.dom4j>
+        <version.javax.mail>1.4.0.v201005080615</version.javax.mail>
+        <version.mailapi>1.4.3</version.mailapi>
+        <version.javax.servlet-api>3.1.0</version.javax.servlet-api>
+        <version.jaxen>1.1</version.jaxen>
+        <version.jbossall-client>3.2.6</version.jbossall-client>
+        <version.log4j>2.24.3</version.log4j>
+        <version.j2ee>1.4</version.j2ee>
+        <version.mysql-connector-java>8.0.33</version.mysql-connector-java>
+        <version.jgroups>2.6.22.Final</version.jgroups>
+        <version.oswego-concurrent>1.3.4</version.oswego-concurrent>
+        <version.slf4j>1.7.7</version.slf4j>
+        <!-- Bouncy Castle FIPS Provider versions for FIPS 140-2/140-3 compliance.
+             2.1.x line is the current FIPS-certified release (Cert #4943, BC-FJA 2.1.0
+             with 2.1.2 as the patched submission). 2.1.0+ also fixes the
+             SecureRandom bootstrap recursion that caused StackOverflowError on
+             OS-FIPS-enabled Linux hosts (the original mro_dist_mysql_d_1 crash). -->
+        <version.bc-fips>2.1.2</version.bc-fips>
+        <version.bcpkix-fips>2.1.11</version.bcpkix-fips>
+        <version.bcutil-fips>2.1.6</version.bcutil-fips>
+    </properties>
+    <scm>
+        <connection>scm:git:https://github.com/nasa-ammos/fei-main.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/nasa-ammos/fei-main.git</developerConnection>
+        <url>https://github.com/nasa-ammos/fei-main</url>
+    </scm>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <pluginManagement>
+            <plugins>
+                <!-- Compiler: Java 17, debug symbols, lint warnings (inlined from parent-mipl) -->
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.plugin.compiler}</version>
+                    <configuration>
+                        <source>17</source>
+                        <target>17</target>
+                        <release>17</release>
+                        <fork>true</fork>
+                        <meminitial>128m</meminitial>
+                        <maxmem>512m</maxmem>
+                        <debug>${compiler.debug}</debug>
+                        <debuglevel>${compiler.debuglevel}</debuglevel>
+                        <forceJavacCompilerUse>${compiler.javac}</forceJavacCompilerUse>
+                        <compilerArgs>
+                            <arg>-Xlint:deprecation</arg>
+                            <arg>-Xlint:unchecked</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${version.plugin.assembly}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${version.plugin.clean}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${version.plugin.dependency}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${version.plugin.deploy}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${version.plugin.enforcer}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${version.plugin.install}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${version.plugin.jar}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${version.plugin.javadoc}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <failOnError>false</failOnError>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${version.plugin.release}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>${version.plugin.scm}</version>
+                    <configuration>
+                        <tag>${project.version}</tag>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.plugin.surefire}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${version.plugin.source}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludeResources>true</excludeResources>
+                    </configuration>
+                </plugin>
+                <!-- flatten-maven-plugin: resolves ${revision} CI-friendly version in published POMs -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${version.plugin.flatten}</version>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.google.code.maven-replacer-plugin</groupId>
+                    <artifactId>replacer</artifactId>
+                    <version>${version.plugin.replacer}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${version.plugin.resources}</version>
+                </plugin>
+                <plugin>
+                    <!--
+                        NOTE (2018-05-14): version 2.2 is initially used as it was closer to the latest version of 2.3.1
+                        But the error output is displayed while trying to generate the java files
+
+                        Failed to execute goal org.codehaus.mojo:jaxb2-maven-plugin:2.2:xjc (xjc)
+                        on project mdms-komodo-server: org.xml.sax.SAXNotRecognizedException: Feature
+                        'http://javax.xml.XMLConstants/feature/secure-processing' is not recognized.
+
+                        Hence, it is reverted to 1.5 which has slightly different way of pointing to the xsd files
+                        outputDirectory & schemaDirectory is added and sources tag is commented.
+                    -->
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxb2-maven-plugin</artifactId>
+                    <version>${version.plugin.jaxb2}</version>
+                </plugin>
+                <!-- Jakarta-compatible JAX-WS plugin for Java 17+ -->
+                <plugin>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>${version.plugin.jaxws}</version>
+                </plugin>
+                <!-- GPG signing — required for Maven Central publishing -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.2.4</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                </gpgArguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--
+                    Sonatype Central Publishing plugin.
+                    Replaces the old nexus-staging-maven-plugin for the new
+                    central.sonatype.com portal.
+                    Credentials are supplied via .github/maven-settings.xml
+                    (server id: "central") during CI.
+                -->
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.5.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+        distributionManagement is required by central-publishing-maven-plugin.
+        The actual publishing endpoint is controlled by the plugin configuration above;
+        this block satisfies Maven's requirement for a <distributionManagement> entry.
+    -->
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.com/</url>
+        </repository>
+    </distributionManagement>
+
+    <!--
+        "release" profile — activated in CI during the deploy step.
+        Enables GPG signing and Sonatype Central publishing.
+        Not active during local builds so contributors don't need GPG set up.
+    -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
+                <artifactId>authapi</artifactId>
+                <version>${version.authapi}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
+                <artifactId>cryptoj</artifactId>
+                <version>${version.cryptoj}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
+                <artifactId>jconnect</artifactId>
+                <version>${version.jconnect}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa.jpl.ammos.ids.wrp</groupId>
+                <artifactId>juneberry</artifactId>
+                <version>${version.juneberry}</version>
+            </dependency>
+            <dependency>
+                <groupId>c3p0</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${version.c3p0}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple  -->
+            <dependency>
+                <groupId>com.googlecode.json-simple</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>${version.json-simple}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.messaging.mq</groupId>
+                <artifactId>fscontext</artifactId>
+                <version>${version.fscontext}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${version.commons-codec}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${version.commons-logging}</version>
+            </dependency>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${version.dom4j}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${version.javax.mail}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mailapi</artifactId>
+                <version>${version.mailapi}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${version.javax.servlet-api}</version>
+            </dependency>
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${version.jaxen}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jboss/jbossall-client -->
+            <dependency>
+                <groupId>jboss</groupId>
+                <artifactId>jbossall-client</artifactId>
+                <version>${version.jbossall-client}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${version.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${version.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>milyn</groupId>
+                <artifactId>j2ee</artifactId>
+                <version>${version.j2ee}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${version.mysql-connector-java}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgroups</groupId>
+                <artifactId>jgroups</artifactId>
+                <version>${version.jgroups}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lucee</groupId>
+                <artifactId>oswego-concurrent</artifactId>
+                <version>${version.oswego-concurrent}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <!-- Jakarta XML Web Services API for Java 17+ -->
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>${version.jakarta.xml.ws-api}</version>
+            </dependency>
+            <!-- Jakarta XML Binding API for Java 17+ -->
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${version.jakarta.xml.bind-api}</version>
+            </dependency>
+            <!-- JAXB Runtime (implementation) -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${version.jaxb-impl}</version>
+            </dependency>
+            <!-- Bouncy Castle FIPS Provider for FIPS 140-2/140-3 compliance -->
+            <!-- These provide FIPS-certified cryptographic implementations -->
+            <!-- bc-fips: Core FIPS provider (replaces bcprov-jdk15on) -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bc-fips</artifactId>
+                <version>${version.bc-fips}</version>
+            </dependency>
+            <!-- bcpkix-fips: PKIX/CMS/EAC/PKCS/OCSP/TSP/OPENSSL support -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-fips</artifactId>
+                <version>${version.bcpkix-fips}</version>
+            </dependency>
+            <!-- bcutil-fips: Utility classes for BC-FIPS -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcutil-fips</artifactId>
+                <version>${version.bcutil-fips}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
