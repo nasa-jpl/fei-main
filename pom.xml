@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Tagging for CI -->
-        <semver>3.6.4</semver>
+        <semver>3.6.5</semver>
         <revision>${semver}${buildnum}${sha1}${changelist}</revision>
         <!-- Version suffix properties (set by CI; defaults produce a local SNAPSHOT build) -->
         <buildnum>b0</buildnum>
@@ -67,10 +67,6 @@
         <version.jakarta.xml.ws-api>4.0.0</version.jakarta.xml.ws-api>
         <version.jakarta.xml.bind-api>4.0.0</version.jakarta.xml.bind-api>
         <version.jaxb-impl>4.0.0</version.jaxb-impl>
-        <version.authapi>8.1.2-SNAPSHOT</version.authapi>
-        <version.cryptoj>8.1.2-SNAPSHOT</version.cryptoj>
-        <version.jconnect>5.5_EBF_11937-SNAPSHOT</version.jconnect>
-        <version.juneberry>1.0.7-SNAPSHOT</version.juneberry>
         <version.c3p0>0.8.5.2</version.c3p0>
         <version.json-simple>1.1</version.json-simple>
         <version.fscontext>4.2</version.fscontext>
@@ -97,6 +93,25 @@
         <version.bcpkix-fips>2.1.11</version.bcpkix-fips>
         <version.bcutil-fips>2.1.6</version.bcutil-fips>
     </properties>
+    <url>https://github.com/nasa-ammos/fei-main</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>nasa-ammos</id>
+            <name>NASA JPL AMMOS IDS Team</name>
+            <organization>NASA Jet Propulsion Laboratory</organization>
+            <organizationUrl>https://www.jpl.nasa.gov/</organizationUrl>
+        </developer>
+    </developers>
+
     <scm>
         <connection>scm:git:https://github.com/nasa-ammos/fei-main.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/nasa-ammos/fei-main.git</developerConnection>
@@ -364,26 +379,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
-                <artifactId>authapi</artifactId>
-                <version>${version.authapi}</version>
-            </dependency>
-            <dependency>
-                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
-                <artifactId>cryptoj</artifactId>
-                <version>${version.cryptoj}</version>
-            </dependency>
-            <dependency>
-                <groupId>gov.nasa.jpl.ammos.ids.tps</groupId>
-                <artifactId>jconnect</artifactId>
-                <version>${version.jconnect}</version>
-            </dependency>
-            <dependency>
-                <groupId>gov.nasa.jpl.ammos.ids.wrp</groupId>
-                <artifactId>juneberry</artifactId>
-                <version>${version.juneberry}</version>
-            </dependency>
             <dependency>
                 <groupId>c3p0</groupId>
                 <artifactId>c3p0</artifactId>
