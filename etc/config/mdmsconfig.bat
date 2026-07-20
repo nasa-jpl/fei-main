@@ -287,13 +287,17 @@ set JVM_ARGS=%JVM_ARGS% -Dmdms.logging.config="%FEI5%"\mdms.lcf
 set JVM_ARGS=%JVM_ARGS% -Dkomodo.public.key="%FEI5%"\public.der
 set JVM_ARGS=%JVM_ARGS% -Dkomodo.query.interval=1
 set JVM_ARGS=%JVM_ARGS% -Dkomodo.client.pulse=300
+set JVM_ARGS=%JVM_ARGS% -Dkomodo.client.pulse=300
+
 REM set JVM_ARGS=%JVM_ARGS% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
 REM set JVM_ARGS=%JVM_ARGS% -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl
 REM set JVM_ARGS=%JVM_ARGS% -Dorg.xml.sax.driver=org.apache.xerces.parsers.SAXParser
 set JVM_ARGS=%JVM_ARGS% -Djava.net.preferIPv4Stack=true
 set JVM_ARGS=%JVM_ARGS% -Dkomodo.filehandling.enable=true
 set JVM_ARGS=%JVM_ARGS% -Dkomodo.net.ciphers=TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256
-set JVM_ARGS=%JVM_ARGS% -Dkomodo.net.protocol=TLSv1.2
+set JVM_ARGS=%JVM_ARGS% -Dkomodo.net.protocol=TLSv1.3
+set JVM_ARGS=%JVM_ARGS% -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1
+
 goto VMARGS_D
 
 

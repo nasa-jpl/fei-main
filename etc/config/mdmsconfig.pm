@@ -235,7 +235,7 @@ sub getJVMArgsForServer {
    push @args, "-Djava.net.preferIPv4Stack=true";
    # FIPS 140-2/140-3 compliant cipher suites (AES-GCM and AES-CBC with SHA-2)
    push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
-   push @args, "-Dkomodo.net.protocol=TLSv1.2";
+   push @args, "-Dkomodo.net.protocol=TLSv1.3";
    # FIPS-approved named groups only (no x25519)
    push @args, "-Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1";
    # Force JDK's XML parser to avoid conflict with old xerces JAR in dependencies (Java 17+)
@@ -313,7 +313,7 @@ sub getJVMArgsCheckGUI {
    push @args, "-Dkomodo.filehandling.enable=true";
    # FIPS 140-2/140-3 compliant cipher suites (AES-GCM and AES-CBC with SHA-2)
    push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
-   push @args, "-Dkomodo.net.protocol=TLSv1.2";
+   push @args, "-Dkomodo.net.protocol=TLSv1.3";
    # FIPS-approved named groups only (no x25519)
    push @args, "-Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1";
    # Force JDK's XML parser to avoid conflict with old xerces JAR in dependencies (Java 17+)

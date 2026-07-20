@@ -48,7 +48,7 @@ import jpl.mipl.mdms.utils.logging.Logger;
 public class SecureSocketsUtil {
    // using SSL version 3.
    //private String _algorithm = "SSLv3";
-   private String _algorithm = "TLSv1.2";
+   private String _algorithm = "TLSv1.3";
    private SSLContext _context;
    private final Object _contextLock = new Object();
    private TrustManager[] _tms;
