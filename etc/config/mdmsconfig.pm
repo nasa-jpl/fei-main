@@ -234,7 +234,25 @@ sub getJVMArgsForServer {
    push @args, "-Djavax.net.ssl.trustStoreType=PKCS12";
    push @args, "-Djava.net.preferIPv4Stack=true";
    # FIPS 140-2/140-3 compliant cipher suites (AES-GCM and AES-CBC with SHA-2)
-   push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
+
+  # Disabling TLV 1.2 cipher suites
+  # Note that   In TLSv1.2, the cipher suite name encodes everything — key exchange algorithm, authentication, encryption, and MAC hash — all in one string:
+  #                 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+  #                 ^key exch^ ^auth^ ^encrypt+mode^ ^hash^
+   #   push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
+
+   #     In TLSv1.3, those concerns were separated:
+   #     - Key exchange is handled separately via named groups (secp256r1, etc.) — already configured via -Djdk.tls.namedGroups
+   #     - Authentication is handled separately via the certificate itself
+   #     - The cipher suite only specifies encryption + hash:
+   #
+   #     TLS_AES_256_GCM_SHA384
+   #      ^encrypt+mode^ ^hash^
+   #
+   #     So there are only 3 possible TLSv1.3 cipher suites in Java 17 total (TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_CHACHA20_POLY1305_SHA256),
+   #       TLS_CHACHA20_POLY1305_SHA256 is NOT FIPS compliant
+
+   push @args, "-Dkomodo.net.ciphers=TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256";
    push @args, "-Dkomodo.net.protocol=TLSv1.3";
    # FIPS-approved named groups only (no x25519)
    push @args, "-Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1";
@@ -312,7 +330,24 @@ sub getJVMArgsCheckGUI {
    push @args, "-Djava.net.preferIPv4Stack=true";
    push @args, "-Dkomodo.filehandling.enable=true";
    # FIPS 140-2/140-3 compliant cipher suites (AES-GCM and AES-CBC with SHA-2)
-   push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
+   # Disabling TLV 1.2 cipher suites
+   # Note that   In TLSv1.2, the cipher suite name encodes everything — key exchange algorithm, authentication, encryption, and MAC hash — all in one string:
+   #                 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+   #                 ^key exch^ ^auth^ ^encrypt+mode^ ^hash^
+#   push @args, "-Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256";
+
+#     In TLSv1.3, those concerns were separated:
+#     - Key exchange is handled separately via named groups (secp256r1, etc.) — already configured via -Djdk.tls.namedGroups
+#     - Authentication is handled separately via the certificate itself
+#     - The cipher suite only specifies encryption + hash:
+#
+#     TLS_AES_256_GCM_SHA384
+#      ^encrypt+mode^ ^hash^
+#
+#     So there are only 3 possible TLSv1.3 cipher suites in Java 17 total (TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_CHACHA20_POLY1305_SHA256),
+#       TLS_CHACHA20_POLY1305_SHA256 is NOT FIPS compliant
+
+   push @args, "-Dkomodo.net.ciphers=TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256";
    push @args, "-Dkomodo.net.protocol=TLSv1.3";
    # FIPS-approved named groups only (no x25519)
    push @args, "-Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1";
