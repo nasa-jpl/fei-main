@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Tagging for CI -->
-        <semver>4.0.0</semver>
+        <semver>4.0.1</semver>
         <revision>${semver}${buildnum}${sha1}${changelist}</revision>
         <!-- Version suffix properties (set by CI; defaults produce a local SNAPSHOT build) -->
         <buildnum>b0</buildnum>
