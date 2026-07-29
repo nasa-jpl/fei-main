@@ -386,10 +386,10 @@ getJVMArgsForServer() {
     #GJA_ARGS="${GJA_ARGS} -Dorg.xml.sax.driver=org.apache.xerces.parsers.SAXParser"
     GJA_ARGS="${GJA_ARGS} -Dmdms.user.application=${GJA_USERAPP}"
     GJA_ARGS="${GJA_ARGS} -Djava.net.preferIPv4Stack=true"
-    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256"
-    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.protocol=TLSv1.2"
-
-
+    # documentation for TLSv1.3 is in mdmsconfig.pm
+    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.ciphers=TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256"
+    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.protocol=TLSv1.3"
+    GJA_ARGS="${GJA_ARGS} -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1"
     # check for MacOSX (darwin) options
     if [ "Z${OSTYPE}" = "Zdarwin" ]
     then
@@ -487,8 +487,12 @@ getJVMArgs() {
     GJA_ARGS="${GJA_ARGS} -Dmdms.user.application=${GJA_USERAPP}"
     GJA_ARGS="${GJA_ARGS} -Djava.net.preferIPv4Stack=true"
     GJA_ARGS="${GJA_ARGS} -Dkomodo.filehandling.enable=true"
-    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256"
-    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.protocol=TLSv1.2"
+    # documentation for TLSv1.3 is in mdmsconfig.pm
+    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.ciphers=TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256"
+    GJA_ARGS="${GJA_ARGS} -Dkomodo.net.protocol=TLSv1.3"
+    GJA_ARGS="${GJA_ARGS} -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1"
+
+
 
     # check for MacOSX (darwin) options
     if [ "Z${OSTYPE}" = "Zdarwin" ]
